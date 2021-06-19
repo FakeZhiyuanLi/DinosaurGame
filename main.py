@@ -15,8 +15,6 @@ window = pygame.display.set_mode([WIDTH, HEIGHT])
 BG = (255, 255, 255)
 BLACK = (0, 0, 0)
 
-# Obstacles
-# LITTLE_CACTUS = pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Little_Cactus.png'))
 BIG_CACTUS = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Cactus1.png')), (29, 50))
 BIG_CACTI = []
 
@@ -26,8 +24,8 @@ SMALL_CACTI = []
 CACTUS_GROUP = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'CactusGroup1.png')), (35, 29))
 CACTI_GROUPS = []
 
-BIRD0 = pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Bird0.png'))
-BIRD1 = pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Bird1.png'))
+BIRD0 = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Bird0.png')), (42, 30))
+BIRD1 = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Bird1.png')), (42, 30))
 BIRDS = []
 
 # Dino walk cycles
@@ -42,8 +40,6 @@ DEADSAUR = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame',
 GROUND = pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Ground.png'))
 GROUND_RECT = pygame.Rect((0, HEIGHT / 2 - 35), (1200, 20))
 GROUND_RECT2 = pygame.Rect((1200, HEIGHT / 2 - 35), (1200, 20))
-
-# CLOUDS = pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Cloud.png'))
 
 clock = pygame.time.Clock()
 
@@ -70,6 +66,8 @@ def GENERATE_OBSTACLE():
         SMALL_CACTI.append(pygame.Rect(1100, HEIGHT / 2 - 30, 10, 20))
     elif x == 3:
         CACTI_GROUPS.append(pygame.Rect(1100, HEIGHT / 2 - 30, 30, 25))
+    elif x == 4:
+        BIRDS.append(pygame.Rect(1100, random.randint(50, 200), 30, 28))
 
 def CHECK_COLLISION():
     for cactus in BIG_CACTI:
@@ -81,7 +79,10 @@ def CHECK_COLLISION():
     for cactus in CACTI_GROUPS:
         if DINO_RECT.colliderect(cactus):
             pygame.event.post(pygame.event.Event(DEATH_EVENT))
-        
+    for bird in BIRDS:
+        if DINO_RECT.colliderect(bird):
+            pygame.event.post(pygame.event.Event(DEATH_EVENT))
+
 def DIE():
     window.fill(BG)
     
@@ -115,6 +116,14 @@ def DRAW_WINDOW(cycle_iterations, speed, score, DUCKING):
     for cactus in CACTI_GROUPS:
         cactus.x -= speed
         window.blit(CACTUS_GROUP, (cactus.x, cactus.y))
+
+    for bird in BIRDS:
+        bird.x -= speed
+        if cycle_iterations == 1:
+            window.blit(BIRD0, (bird.x, bird.y))
+        if cycle_iterations == 2:
+            window.blit(BIRD1, (bird.x, bird.y))
+        
 
     if DUCKING:
         print("duck code here")
