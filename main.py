@@ -178,6 +178,9 @@ def main():
             SCORE_SOUND.play()
             time_between_score -= 1
             score += 1
+        elif score % 100 == 0 and score >= 10:
+            SCORE_SOUND.play()
+            score += 1
 
         if timing % time_between_score == 0:
             score += 1
