@@ -32,7 +32,10 @@ BIRDS = []
 DINO0 = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Dinosaur0.png')), (50, 50))
 DINO1 = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Dinosaur1.png')), (50, 50))
 DINO2 = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Dinosaur2.png')), (50, 50))
-DINO_RECT = pygame.Rect(50, HEIGHT / 2 - 35, 50, 50)
+DINO_RECT = pygame.Rect(50, 150, 50, 50)
+
+DUCKSAUR0 = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Ducksaur0.png')), (54, 25))
+DUCKSAUR1 = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Ducksaur1.png')), (54, 25))
 
 DEATH_EVENT = pygame.USEREVENT + 1
 DEADSAUR = pygame.transform.scale(pygame.image.load(os.path.join('DinosaurGame', 'Assets', 'Dead_Dinosaur.png')), (50, 50))
@@ -61,13 +64,13 @@ def HANDLE_GROUND(speed):
 def GENERATE_OBSTACLE():
     x = random.randint(1, 4)
     if x == 1:
-        BIG_CACTI.append(pygame.Rect(1100, HEIGHT / 2 - 50, 18, 45))
+        BIG_CACTI.append(pygame.Rect(1100, HEIGHT / 2 - 50, 28, 47))
     elif x == 2:
-        SMALL_CACTI.append(pygame.Rect(1100, HEIGHT / 2 - 30, 10, 20))
+        SMALL_CACTI.append(pygame.Rect(1100, HEIGHT / 2 - 30, 14, 23))
     elif x == 3:
-        CACTI_GROUPS.append(pygame.Rect(1100, HEIGHT / 2 - 30, 30, 25))
+        CACTI_GROUPS.append(pygame.Rect(1100, HEIGHT / 2 - 30, 34, 28))
     elif x == 4:
-        BIRDS.append(pygame.Rect(1100, random.randint(50, 200), 30, 28))
+        BIRDS.append(pygame.Rect(1100, random.randint(50, 180), 38, 28))
 
 def CHECK_COLLISION():
     for cactus in BIG_CACTI:
@@ -107,34 +110,50 @@ def DRAW_WINDOW(cycle_iterations, speed, score, DUCKING):
 
     for cactus in BIG_CACTI:
         cactus.x -= speed
+        cactus_rect = pygame.Rect(cactus.x, cactus.y, cactus.width, cactus.height)
+        pygame.draw.rect(window, (144, 238, 144), cactus_rect)
         window.blit(BIG_CACTUS, (cactus.x, cactus.y))
+        
 
     for cactus in SMALL_CACTI:
         cactus.x -= speed
+        cactus_rect = pygame.Rect(cactus.x, cactus.y, cactus.width, cactus.height)
+        pygame.draw.rect(window, (144, 238, 144), cactus_rect)
         window.blit(SMALL_CACTUS, (cactus.x, cactus.y))
-
+        
+        
     for cactus in CACTI_GROUPS:
         cactus.x -= speed
+        cactus_rect = pygame.Rect(cactus.x, cactus.y, cactus.width, cactus.height)
+        pygame.draw.rect(window, (144, 238, 144), cactus_rect)
         window.blit(CACTUS_GROUP, (cactus.x, cactus.y))
-
+        
+        
     for bird in BIRDS:
         bird.x -= speed
+        bird_rect = pygame.Rect(bird.x, bird.y, bird.width, bird.height)
+        pygame.draw.rect(window, (144, 238, 144), bird_rect)
         if cycle_iterations == 1:
             window.blit(BIRD0, (bird.x, bird.y))
         if cycle_iterations == 2:
             window.blit(BIRD1, (bird.x, bird.y))
         
-
+        
+    temp_rect = pygame.Rect(DINO_RECT.x, DINO_RECT.y, DINO_RECT.width, DINO_RECT.height)
+    pygame.draw.rect(window, (144, 238, 144), temp_rect)
     if DUCKING:
-        print("duck code here")
-
-    if DINO_RECT.y < 150:
-        window.blit(DINO0, (DINO_RECT.x, DINO_RECT.y))
-    else:
         if cycle_iterations == 1:
-            window.blit(DINO1, (DINO_RECT.x, DINO_RECT.y))
+            window.blit(DUCKSAUR0, (DINO_RECT.x, DINO_RECT.y))
         if cycle_iterations == 2:
-            window.blit(DINO2, (DINO_RECT.x, DINO_RECT.y))
+            window.blit(DUCKSAUR1, (DINO_RECT.x, DINO_RECT.y))
+    else:
+        if DINO_RECT.y < 150:
+            window.blit(DINO0, (DINO_RECT.x, DINO_RECT.y))
+        else:
+            if cycle_iterations == 1:
+                window.blit(DINO1, (DINO_RECT.x, DINO_RECT.y))
+            if cycle_iterations == 2:
+                window.blit(DINO2, (DINO_RECT.x, DINO_RECT.y))
 
     pygame.display.update()
 
@@ -164,16 +183,31 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 # Space is high jump, and up arrow is low jump
-                if event.key == pygame.K_SPACE and DINO_RECT.y >= 150 or event.key == pygame.K_w and DINO_RECT.y >= 150:
+                if not DUCKING and event.key == pygame.K_SPACE and DINO_RECT.y >= 150 or event.key == pygame.K_w and DINO_RECT.y >= 150:
+                    DINO_RECT.width = 50
+                    DINO_RECT.height = 50
+                    DINO_RECT.y = 150
                     MOVEMENT = 18
                     time_between = 25
                     JUMP_SOUND.play()
-                if event.key == pygame.K_UP and DINO_RECT.y >= 150:
+                if not DUCKING and event.key == pygame.K_UP and DINO_RECT.y >= 150:
+                    DINO_RECT.width = 50
+                    DINO_RECT.height = 50
+                    DINO_RECT.y = 150
                     MOVEMENT = 15
                     time_between = 22
                     JUMP_SOUND.play()
-                if event.key == pygame.K_DOWN:
-                    DUCKING = True 
+                if event.key == pygame.K_DOWN and DINO_RECT.y >= 150:
+                    if DUCKING:
+                        DUCKING = False
+                        DINO_RECT.width = 50
+                        DINO_RECT.height = 50
+                        DINO_RECT.y = 150
+                    else:
+                        DUCKING = True
+                        DINO_RECT.width = 54
+                        DINO_RECT.height = 25
+                        DINO_RECT.y = 176
         timing += 1
         if timing % 6 == 0:
             cycle_iterations += 1
@@ -196,7 +230,6 @@ def main():
             
         if timing % TIME_BETWEEN_OBSTACLE == 0:
             GENERATE_OBSTACLE()
-
         # Handling movement
         if MOVEMENT >= 0:
             DINO_RECT.y -= 9
